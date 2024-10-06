@@ -99,11 +99,11 @@ resource "aws_network_interface" "test_interface" {
 }
 
 #Elastic IP
-resource "aws_eip" "Test_IP" {
+resource "aws_eip" "ip_1" {
   domain                    = "vpc"
-  depends_on = [aws_internet_gateway.test_igw]
   network_interface         = aws_network_interface.test_interface.id
   associate_with_private_ip = "10.0.1.50"
+  depends_on = [aws_internet_gateway.test_igw]
 }
 
 #EC2 Instance
@@ -123,8 +123,9 @@ resource "aws_instance" "nginx_server"{
                 #!/bin/bash
                 sudo apt update -y
                 sudo apt install nginx -y
+                echo '<h1>your very own nginx server</h1>' | sudo tee /var/www/html/index.nginx-debian.html
+                sudo systemctl enable nginx
                 sudo systemctl start nginx
-                sudo bash -c 'echo your very own nginx server > /var/www/html/index.html'
                 EOF
 
     tags = {
